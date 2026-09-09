@@ -1,0 +1,499 @@
+### SIAKAD MUSA - API Authentication Testing
+### Base URL: http://localhost:5000/api
+
+###################################################
+### 1. REGISTER STUDENT
+###################################################
+
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "student.test@example.com",
+  "password": "password123",
+  "username": "studenttest",
+  "role": "student",
+  "full_name": "Student Test",
+  "student_number": "2024999",
+  "gender": "Male",
+  "birth_place": "Jakarta",
+  "birth_date": "2001-05-15",
+  "phone": "08123456789",
+  "address": "Jl. Test No. 123",
+  "class_name": "XII IPA 1",
+  "major": "IPA",
+  "enrollment_year": 2024
+}
+
+###################################################
+### 2. REGISTER TEACHER
+###################################################
+
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "teacher.test@example.com",
+  "password": "password123",
+  "username": "teachertest",
+  "role": "teacher",
+  "full_name": "Teacher Test",
+  "teacher_number": "T2024999",
+  "gender": "Female",
+  "birth_place": "Bandung",
+  "birth_date": "1985-03-20",
+  "phone": "08198765432",
+  "address": "Jl. Guru No. 456",
+  "subject": "Physics"
+}
+
+###################################################
+### 3. REGISTER ADMIN (Without Profile)
+###################################################
+
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin.test@example.com",
+  "password": "password123",
+  "username": "admintest",
+  "role": "admin"
+}
+
+###################################################
+### 4. LOGIN
+###################################################
+
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student.test@example.com",
+  "password": "password123"
+}
+
+###################################################
+### 5. GET CURRENT USER
+### Note: Replace <YOUR_TOKEN> with actual token from login
+###################################################
+
+GET http://localhost:5000/api/auth/me
+Authorization: Bearer <YOUR_TOKEN>
+
+###################################################
+### ERROR TEST CASES
+###################################################
+
+### Test: Missing Email
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "password": "password123",
+  "role": "student"
+}
+
+### Test: Invalid Email Format
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "invalid-email",
+  "password": "password123",
+  "role": "student"
+}
+
+### Test: Short Password
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "123",
+  "role": "student"
+}
+
+### Test: Invalid Role
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "role": "invalid_role"
+}
+
+### Test: Wrong Password
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student.test@example.com",
+  "password": "wrongpassword"
+}
+
+### Test: User Not Found
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "notexist@example.com",
+  "password": "password123"
+}
+
+### Test: No Token on Protected Route
+GET http://localhost:5000/api/auth/me
+
+### Test: Invalid Token
+GET http://localhost:5000/api/auth/me
+Authorization: Bearer invalid.token.here
+
+
+###################################################
+### HERO SLIDES API TESTING
+###################################################
+
+###################################################
+### 1. GET ALL HERO SLIDES (Public - No Auth)
+###################################################
+
+GET http://localhost:5000/api/hero-slides
+
+###################################################
+### 2. GET ALL ACTIVE HERO SLIDES (Public)
+###################################################
+
+GET http://localhost:5000/api/hero-slides?is_active=true
+
+###################################################
+### 3. GET HERO SLIDE BY ID (Public)
+###################################################
+
+GET http://localhost:5000/api/hero-slides/<HERO_SLIDE_ID>
+
+###################################################
+### 4. CREATE HERO SLIDE (Admin Only)
+### Note: Replace <ADMIN_TOKEN> with token from admin login
+###################################################
+
+POST http://localhost:5000/api/hero-slides
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "title": "Selamat Datang di SIAKAD MUSA",
+  "subtitle": "Sistem Informasi Akademik Modern",
+  "description": "Platform akademik terintegrasi untuk pengelolaan data siswa, guru, dan akademik",
+  "image": "https://example.com/images/hero-slide-1.jpg",
+  "sort_order": 1,
+  "is_active": true
+}
+
+###################################################
+### 5. CREATE HERO SLIDE - Example 2
+###################################################
+
+POST http://localhost:5000/api/hero-slides
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "title": "Bergabunglah Bersama Kami",
+  "subtitle": "Pendidikan Berkualitas untuk Masa Depan Cerah",
+  "description": "Kami menyediakan pendidikan terbaik dengan fasilitas modern dan tenaga pengajar profesional",
+  "image": "https://example.com/images/hero-slide-2.jpg",
+  "sort_order": 2,
+  "is_active": true
+}
+
+###################################################
+### 6. UPDATE HERO SLIDE (Admin Only)
+###################################################
+
+PUT http://localhost:5000/api/hero-slides/<HERO_SLIDE_ID>
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "title": "Selamat Datang di SIAKAD MUSA - Updated",
+  "subtitle": "Sistem Informasi Akademik Modern dan Terintegrasi",
+  "sort_order": 0,
+  "is_active": true
+}
+
+###################################################
+### 7. UPDATE HERO SLIDE - Partial Update
+###################################################
+
+PUT http://localhost:5000/api/hero-slides/<HERO_SLIDE_ID>
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "is_active": false
+}
+
+###################################################
+### 8. DELETE HERO SLIDE (Admin Only)
+###################################################
+
+DELETE http://localhost:5000/api/hero-slides/<HERO_SLIDE_ID>
+Authorization: Bearer <ADMIN_TOKEN>
+
+###################################################
+### ERROR TEST CASES - HERO SLIDES
+###################################################
+
+### Test: Create without authentication
+POST http://localhost:5000/api/hero-slides
+Content-Type: application/json
+
+{
+  "title": "Test Without Auth",
+  "image": "https://example.com/test.jpg"
+}
+
+### Test: Create with student token (should fail - not admin)
+POST http://localhost:5000/api/hero-slides
+Content-Type: application/json
+Authorization: Bearer <STUDENT_TOKEN>
+
+{
+  "title": "Test With Student Token",
+  "image": "https://example.com/test.jpg"
+}
+
+### Test: Create with missing required fields
+POST http://localhost:5000/api/hero-slides
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "subtitle": "Missing title and image"
+}
+
+### Test: Create with empty title
+POST http://localhost:5000/api/hero-slides
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "title": "",
+  "image": "https://example.com/test.jpg"
+}
+
+### Test: Update non-existent hero slide
+PUT http://localhost:5000/api/hero-slides/invalid-uuid-here
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "title": "Update Non Existent"
+}
+
+### Test: Delete non-existent hero slide
+DELETE http://localhost:5000/api/hero-slides/invalid-uuid-here
+Authorization: Bearer <ADMIN_TOKEN>
+
+### Test: Delete without authentication
+DELETE http://localhost:5000/api/hero-slides/<HERO_SLIDE_ID>
+
+
+###################################################
+### RESPONSE FORMAT TESTING
+###################################################
+
+###################################################
+### 1. Get Hero Slides WITHOUT Pagination
+###################################################
+
+GET http://localhost:5000/api/hero-slides
+
+###################################################
+### 2. Get Hero Slides WITH Pagination (Page 1)
+###################################################
+
+GET http://localhost:5000/api/hero-slides?page=1&limit=5
+
+###################################################
+### 3. Get Hero Slides WITH Pagination (Page 2)
+###################################################
+
+GET http://localhost:5000/api/hero-slides?page=2&limit=5
+
+###################################################
+### 4. Get Active Hero Slides WITH Pagination
+###################################################
+
+GET http://localhost:5000/api/hero-slides?is_active=true&page=1&limit=10
+
+
+###################################################
+### SCHOOL PROFILE API TESTING
+###################################################
+
+###################################################
+### 1. GET SCHOOL PROFILE (Public - No Auth)
+###################################################
+
+GET http://localhost:5000/api/school-profile
+
+###################################################
+### 2. CREATE SCHOOL PROFILE (Admin Only)
+### Note: Replace <ADMIN_TOKEN> with token from admin login
+### Note: For FormData with file, use REST Client or Postman
+###################################################
+
+POST http://localhost:5000/api/school-profile
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "school_name": "SMK MUSA",
+  "tagline": "Mewujudkan Siswa yang Unggul dan Berakhlak Mulia",
+  "description": "SMK MUSA adalah sekolah menengah kejuruan yang berfokus pada pengembangan kompetensi siswa di bidang teknologi dan bisnis.",
+  "address": "Jl. Pendidikan No. 123, Jakarta Selatan",
+  "phone": "021-12345678",
+  "email": "info@smkmusa.sch.id",
+  "website": "https://www.smkmusa.sch.id",
+  "vision": "Menjadi sekolah menengah kejuruan terkemuka yang menghasilkan lulusan berkualitas, kompeten, dan berakhlak mulia.",
+  "mission": "1. Menyelenggarakan pendidikan berbasis kompetensi\n2. Mengembangkan karakter siswa yang berakhlak mulia\n3. Membangun kemitraan dengan dunia industri\n4. Menyediakan fasilitas pembelajaran yang modern",
+  "instagram": "https://instagram.com/smkmusa",
+  "facebook": "https://facebook.com/smkmusa",
+  "youtube": "https://youtube.com/@smkmusa"
+}
+
+###################################################
+### 3. UPDATE SCHOOL PROFILE (Admin Only)
+### Note: Replace <SCHOOL_PROFILE_ID> with actual ID from GET request
+###################################################
+
+PUT http://localhost:5000/api/school-profile/<SCHOOL_PROFILE_ID>
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "school_name": "SMK MUSA - Updated",
+  "tagline": "Mewujudkan Siswa yang Unggul, Kompeten, dan Berakhlak Mulia",
+  "phone": "021-87654321"
+}
+
+###################################################
+### 4. UPDATE SCHOOL PROFILE - Partial Update
+###################################################
+
+PUT http://localhost:5000/api/school-profile/<SCHOOL_PROFILE_ID>
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "website": "https://www.smkmusa.ac.id",
+  "instagram": "https://instagram.com/smkmusaofficial"
+}
+
+###################################################
+### 5. DELETE SCHOOL PROFILE (Admin Only)
+###################################################
+
+DELETE http://localhost:5000/api/school-profile/<SCHOOL_PROFILE_ID>
+Authorization: Bearer <ADMIN_TOKEN>
+
+###################################################
+### ERROR TEST CASES - SCHOOL PROFILE
+###################################################
+
+### Test: Create without authentication
+POST http://localhost:5000/api/school-profile
+Content-Type: application/json
+
+{
+  "school_name": "Test Without Auth"
+}
+
+### Test: Create with student token (should fail - not admin)
+POST http://localhost:5000/api/school-profile
+Content-Type: application/json
+Authorization: Bearer <STUDENT_TOKEN>
+
+{
+  "school_name": "Test With Student Token"
+}
+
+### Test: Create with missing required fields
+POST http://localhost:5000/api/school-profile
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "tagline": "Missing school_name"
+}
+
+### Test: Create with empty school_name
+POST http://localhost:5000/api/school-profile
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "school_name": ""
+}
+
+### Test: Create duplicate school profile (should fail)
+POST http://localhost:5000/api/school-profile
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "school_name": "Duplicate School"
+}
+
+### Test: Update non-existent school profile
+PUT http://localhost:5000/api/school-profile/invalid-uuid-here
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "school_name": "Update Non Existent"
+}
+
+### Test: Update with invalid email
+PUT http://localhost:5000/api/school-profile/<SCHOOL_PROFILE_ID>
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+
+{
+  "email": "invalid-email-format"
+}
+
+### Test: Delete non-existent school profile
+DELETE http://localhost:5000/api/school-profile/invalid-uuid-here
+Authorization: Bearer <ADMIN_TOKEN>
+
+### Test: Delete without authentication
+DELETE http://localhost:5000/api/school-profile/<SCHOOL_PROFILE_ID>
+
+###################################################
+### NOTES FOR FILE UPLOAD (LOGO)
+###################################################
+
+# To upload a logo, use multipart/form-data with a REST client like Postman
+# or Thunder Client in VS Code. Example:
+#
+# POST http://localhost:5000/api/school-profile
+# Authorization: Bearer <ADMIN_TOKEN>
+# Content-Type: multipart/form-data
+# 
+# Form Data:
+# - logo: [SELECT FILE]
+# - school_name: SMK MUSA
+# - tagline: Mewujudkan Siswa yang Unggul
+# - description: ...
+# - address: ...
+# - phone: ...
+# - email: ...
+# - website: ...
+# - vision: ...
+# - mission: ...
+# - instagram: ...
+# - facebook: ...
+# - youtube: ...
