@@ -46,7 +46,7 @@ const LEVEL_COLORS: Record<string, string> = {
   Sekolah:       'bg-green-100 text-green-700 border-green-200',
 };
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
 
 const emptyForm = (): AchievementFormData => ({
   title: '',

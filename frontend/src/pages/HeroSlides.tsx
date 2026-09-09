@@ -23,6 +23,9 @@ interface HeroSlideFormData {
   imageFile?: File | null;
 }
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 export default function HeroSlides() {
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +55,7 @@ export default function HeroSlides() {
   const fetchHeroSlides = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/hero-slides', {
+      const response = await fetch(`${API_URL}/hero-slides`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -101,7 +104,7 @@ export default function HeroSlides() {
       is_active: slide.is_active,
       imageFile: null,
     });
-    setImagePreview(`http://localhost:5000${slide.image}`);
+    setImagePreview(`${API_BASE}${slide.image}`);
     setFormErrors([]);
     setShowModal(true);
   };
@@ -166,8 +169,8 @@ export default function HeroSlides() {
 
     try {
       const url = editingSlide
-        ? `http://localhost:5000/api/hero-slides/${editingSlide.id}`
-        : 'http://localhost:5000/api/hero-slides';
+        ? `${API_URL}/hero-slides/${editingSlide.id}`
+        : `${API_URL}/hero-slides`;
 
       const method = editingSlide ? 'PUT' : 'POST';
 
@@ -215,7 +218,7 @@ export default function HeroSlides() {
 
   const toggleActive = async (id: string, currentStatus: boolean) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/hero-slides/${id}`, {
+      const response = await fetch(`${API_URL}/hero-slides/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -247,7 +250,7 @@ export default function HeroSlides() {
 
     setDeleting(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/hero-slides/${slideToDelete}`, {
+      const response = await fetch(`${API_URL}/hero-slides/${slideToDelete}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -330,7 +333,7 @@ export default function HeroSlides() {
                 </div>
               ) : (
                 <img
-                  src={`http://localhost:5000${slide.image}`}
+                  src={`${API_BASE}${slide.image}`}
                   alt={slide.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   onError={() => handleImageError(slide.id)}

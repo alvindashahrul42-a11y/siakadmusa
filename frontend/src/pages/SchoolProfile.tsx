@@ -10,6 +10,8 @@ import {
 } from '../services/schoolProfile.service';
 import type { SchoolProfile as SchoolProfileType, SchoolProfileFormData } from '../types/schoolProfile';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || '';
+
 export default function SchoolProfile() {
   const [profile, setProfile] = useState<SchoolProfileType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,7 +102,7 @@ export default function SchoolProfile() {
     });
     setLogoFile(null);
     if (profile.logo) {
-      setLogoPreview(`http://localhost:5000${profile.logo}`);
+      setLogoPreview(`${API_BASE}${profile.logo}`);
     } else {
       setLogoPreview(null);
     }
