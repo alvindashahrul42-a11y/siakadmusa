@@ -20,7 +20,7 @@ const DEFAULT_FORM: SchoolFacilityFormData = {
 };
 
 export default function SchoolFacilities() {
-  const { user } = useAuth();
+  useAuth();
 
   const [facilities, setFacilities] = useState<SchoolFacility[]>([]);
   const [loading, setLoading] = useState(true);

@@ -20,7 +20,7 @@ const DEFAULT_FORM: SchoolProgramFormData = {
 };
 
 export default function SchoolPrograms() {
-  const { user } = useAuth();
+  useAuth();
 
   const [programs, setPrograms] = useState<SchoolProgram[]>([]);
   const [loading, setLoading] = useState(true);

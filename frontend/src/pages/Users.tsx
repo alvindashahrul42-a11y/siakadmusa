@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Edit, Trash2, Search, ChevronLeft, ChevronRight, X, Users as UsersIcon, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Edit, Trash2, Search, ChevronLeft, ChevronRight, X, Users as UsersIcon, ToggleLeft, ToggleRight } from 'lucide-react';
 import { getUsers, updateUser, toggleUserActive, deleteUser } from '../services/user.service';
 import type { User, UserFormData } from '../types/user';
 
