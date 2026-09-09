@@ -13,6 +13,9 @@ import SchoolAchievements from './pages/SchoolAchievements'
 import Articles from './pages/Articles'
 import ArticleDetail from './pages/ArticleDetail'
 import SchoolPrograms from './pages/SchoolPrograms'
+import Users from './pages/Users'
+import Students from './pages/Students'
+import Teachers from './pages/Teachers'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -39,6 +42,9 @@ function App() {
         <Route path="school-achievements" element={<SchoolAchievements />} />
         <Route path="articles" element={<Articles />} />
         <Route path="school-programs" element={<SchoolPrograms />} />
+        <Route path="users" element={<Users />} />
+        <Route path="students" element={<Students />} />
+        <Route path="teachers" element={<Teachers />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

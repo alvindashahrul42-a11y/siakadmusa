@@ -382,6 +382,44 @@ CREATE TABLE articles (
 
 
 -- =========================================================
+-- 13. TABLE: activity_logs
+-- activity_logs
+-- =========================================================
+
+CREATE TABLE activity_logs (
+    id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+
+    user_id CHAR(36) NULL,
+
+    action VARCHAR(50) NOT NULL,
+    module VARCHAR(100) NOT NULL,
+    description TEXT,
+
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_activity_logs_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+);
+
+CREATE INDEX idx_activity_logs_user_id
+    ON activity_logs(user_id);
+
+CREATE INDEX idx_activity_logs_action
+    ON activity_logs(action);
+
+CREATE INDEX idx_activity_logs_module
+    ON activity_logs(module);
+
+CREATE INDEX idx_activity_logs_created_at
+    ON activity_logs(created_at);
+
+-- =========================================================
 -- INDEX
 -- =========================================================
 

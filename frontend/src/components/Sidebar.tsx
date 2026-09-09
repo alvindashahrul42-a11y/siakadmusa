@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,6 +24,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
     if (activeGroupName) initial[activeGroupName] = true;
     return initial;
   });
+
+  // Sync expanded group whenever active route changes (e.g. navigating via URL)
+  useEffect(() => {
+    if (activeGroupName) {
+      setExpandedGroups(prev => ({ ...prev, [activeGroupName]: true }));
+    }
+  }, [activeGroupName]);
 
   const toggleGroup = (name: string) => {
     setExpandedGroups((prev) => ({ ...prev, [name]: !prev[name] }));

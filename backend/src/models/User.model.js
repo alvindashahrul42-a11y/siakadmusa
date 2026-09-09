@@ -184,6 +184,124 @@ class UserModel {
   }
 
   /**
+   * Get all users with pagination and filters
+   */
+  static async findAll(filters = {}, { limit = 10, offset = 0 } = {}) {
+    let where = ["r.name != 'superuser'"];
+    let params = [];
+
+    if (filters.role) {
+      where.push('r.name = ?');
+      params.push(filters.role);
+    }
+    if (filters.is_active !== undefined) {
+      where.push('u.is_active = ?');
+      params.push(filters.is_active ? 1 : 0);
+    }
+    if (filters.search) {
+      where.push('(u.username LIKE ? OR u.email LIKE ?)');
+      params.push(`%${filters.search}%`, `%${filters.search}%`);
+    }
+
+    const whereClause = 'WHERE ' + where.join(' AND ');
+
+    const [rows] = await pool.execute(
+      `SELECT 
+        u.id,
+        u.username,
+        u.email,
+        u.is_active,
+        u.last_login_at,
+        u.created_at,
+        u.updated_at,
+        r.name AS role_name,
+        r.description AS role_description
+       FROM users u
+       LEFT JOIN roles r ON u.role_id = r.id
+       ${whereClause}
+       ORDER BY u.created_at DESC
+       LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`,
+      params
+    );
+
+    return rows.map(r => this.formatUser(r));
+  }
+
+  /**
+   * Count users with filters
+   */
+  static async count(filters = {}) {
+    let where = ["r.name != 'superuser'"];
+    let params = [];
+
+    if (filters.role) {
+      where.push('r.name = ?');
+      params.push(filters.role);
+    }
+    if (filters.is_active !== undefined) {
+      where.push('u.is_active = ?');
+      params.push(filters.is_active ? 1 : 0);
+    }
+    if (filters.search) {
+      where.push('(u.username LIKE ? OR u.email LIKE ?)');
+      params.push(`%${filters.search}%`, `%${filters.search}%`);
+    }
+
+    const whereClause = 'WHERE ' + where.join(' AND ');
+
+    const [rows] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM users u
+       LEFT JOIN roles r ON u.role_id = r.id
+       ${whereClause}`,
+      params
+    );
+
+    return rows[0].total;
+  }
+
+  /**
+   * Update user
+   */
+  static async update(id, data) {
+    const fields = [];
+    const params = [];
+
+    if (data.username !== undefined) { fields.push('username = ?'); params.push(data.username); }
+    if (data.email !== undefined)    { fields.push('email = ?');    params.push(data.email); }
+    if (data.password !== undefined) {
+      const hashed = await bcrypt.hash(data.password, 10);
+      fields.push('password = ?');
+      params.push(hashed);
+    }
+    if (data.role_id !== undefined)  { fields.push('role_id = ?');  params.push(data.role_id); }
+    if (data.is_active !== undefined){ fields.push('is_active = ?');params.push(data.is_active ? 1 : 0); }
+
+    if (fields.length === 0) return this.findById(id);
+
+    fields.push('updated_at = CURRENT_TIMESTAMP');
+    params.push(id);
+
+    await pool.execute(
+      `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
+      params
+    );
+
+    return this.findById(id);
+  }
+
+  /**
+   * Delete user
+   */
+  static async delete(id) {
+    const [result] = await pool.execute(
+      `DELETE FROM users WHERE id = ?`,
+      [id]
+    );
+    return result.affectedRows > 0;
+  }
+
+  /**
    * Find role by name
    */
   static async findRoleByName(roleName) {
@@ -193,6 +311,16 @@ class UserModel {
     );
     
     return rows[0];
+  }
+
+  /**
+   * Get all roles
+   */
+  static async findAllRoles() {
+    const [rows] = await pool.execute(
+      `SELECT id, name, description FROM roles ORDER BY name`
+    );
+    return rows;
   }
 }
 

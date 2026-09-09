@@ -14,9 +14,10 @@ export default function DashboardLayout() {
 
   // Get current page info
   const { menuItem } = getMenuItemByPath(location.pathname);
+  const isHomePage = location.pathname === '/dashboard';
   const pageTitle = menuItem?.title || 'Dashboard';
-  const pageDescription = location.pathname === '/dashboard' 
-    ? 'Selamat datang kembali!' 
+  const pageDescription = isHomePage
+    ? 'Selamat datang kembali!'
     : `Kelola ${pageTitle.toLowerCase()}`;
 
   // Close dropdown when clicking outside

@@ -35,6 +35,9 @@ app.use('/api/school-activities', require('./routes/schoolActivity.routes'));
 app.use('/api/school-achievements', require('./routes/schoolAchievement.routes'));
 app.use('/api/articles', require('./routes/article.routes'));
 app.use('/api/school-programs', require('./routes/schoolProgram.routes'));
+app.use('/api/users', require('./routes/user.routes'));
+app.use('/api/students', require('./routes/student.routes'));
+app.use('/api/teachers', require('./routes/teacher.routes'));
 
 // 404 handler
 app.use((req, res) => {

@@ -45,7 +45,7 @@ export const STANDALONE_TOP: MenuGroup = {
   title: "Dashboard",
   href: "/dashboard",
   icon: LayoutDashboard,
-  roles: ["admin", "teacher", "student"],
+  roles: ["superuser", "teacher", "student"],
 };
 
 export const STANDALONE_BOTTOM: MenuGroup = {
@@ -53,7 +53,7 @@ export const STANDALONE_BOTTOM: MenuGroup = {
   title: "Pengaturan",
   href: "/dashboard/settings",
   icon: Settings,
-  roles: ["admin"],
+  roles: ["superuser"],
 };
 
 // ─── Group: Landing Page ───────────────────────────────────────────────────────
@@ -61,63 +61,63 @@ export const LANDING_PAGE_GROUP: MenuGroup = {
   name: "landing-page",
   title: "Landing Page",
   icon: Globe,
-  roles: ["admin"],
+  roles: ["superuser"],
   children: [
     {
       name: "hero-slides",
       title: "Hero Slide",
       href: "/dashboard/hero-slides",
       icon: Image,
-      roles: ["admin"],
+      roles: ["superuser"],
     },
     {
       name: "school-profile",
       title: "Profil Sekolah",
       href: "/dashboard/school-profile",
       icon: Building,
-      roles: ["admin"],
+      roles: ["superuser"],
     },
     {
       name: "school-facilities",
       title: "Fasilitas Sekolah",
       href: "/dashboard/school-facilities",
       icon: Building2,
-      roles: ["admin"],
+      roles: ["superuser"],
     },
     {
       name: "school-programs",
       title: "Program Unggulan",
       href: "/dashboard/school-programs",
       icon: Layers,
-      roles: ["admin"],
+      roles: ["superuser"],
     },
     {
       name: "extracurriculars",
       title: "Ekstrakurikuler",
       href: "/dashboard/extracurriculars",
       icon: Dumbbell,
-      roles: ["admin"],
+      roles: ["superuser"],
     },
     {
       name: "school-activities",
       title: "Kegiatan Sekolah",
       href: "/dashboard/school-activities",
       icon: CalendarDays,
-      roles: ["admin"],
+      roles: ["superuser"],
     },
     {
       name: "school-achievements",
       title: "Prestasi Sekolah",
       href: "/dashboard/school-achievements",
       icon: Trophy,
-      roles: ["admin"],
+      roles: ["superuser"],
     },
     {
       name: "articles",
       title: "Artikel & Berita",
       href: "/dashboard/articles",
       icon: Newspaper,
-      roles: ["admin"],
+      roles: ["superuser"],
     },
   ],
 };
@@ -127,49 +127,56 @@ export const AKADEMIK_GROUP: MenuGroup = {
   name: "akademik",
   title: "Akademik",
   icon: School,
-  roles: ["admin", "teacher", "student"],
+  roles: ["superuser", "teacher", "student"],
   children: [
+    {
+      name: "users",
+      title: "Data Pengguna",
+      href: "/dashboard/users",
+      icon: UserCircle,
+      roles: ["superuser", "teacher"],
+    },
     {
       name: "students",
       title: "Data Siswa",
       href: "/dashboard/students",
       icon: GraduationCap,
-      roles: ["admin", "teacher"],
+      roles: ["superuser", "teacher"],
     },
     {
       name: "teachers",
       title: "Data Guru",
       href: "/dashboard/teachers",
       icon: UserCircle,
-      roles: ["admin"],
+      roles: ["superuser", "teacher"],
     },
     {
       name: "subjects",
       title: "Mata Pelajaran",
       href: "/dashboard/subjects",
       icon: BookOpen,
-      roles: ["admin", "teacher"],
+      roles: ["superuser", "teacher"],
     },
     {
       name: "schedule",
       title: "Jadwal",
       href: "/dashboard/schedule",
       icon: Calendar,
-      roles: ["admin", "teacher", "student"],
+      roles: ["superuser", "teacher", "student"],
     },
     {
       name: "grades",
       title: "Nilai",
       href: "/dashboard/grades",
       icon: ClipboardList,
-      roles: ["admin", "teacher", "student"],
+      roles: ["superuser", "teacher", "student"],
     },
     {
       name: "reports",
       title: "Laporan",
       href: "/dashboard/reports",
       icon: FileText,
-      roles: ["admin", "teacher"],
+      roles: ["superuser", "teacher"],
     },
   ],
 };
@@ -184,8 +191,8 @@ export const MENU_GROUPS: MenuGroup[] = [
 
 // ─── Flat list (backward-compat untuk helper functions) ───────────────────────
 export const MENU_ITEMS: MenuItem[] = [
-  { name: "dashboard", title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "teacher", "student"] },
-  { name: "settings",  title: "Pengaturan", href: "/dashboard/settings", icon: Settings, roles: ["admin"] },
+  { name: "dashboard", title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["superuser", "teacher", "student"] },
+  { name: "settings",  title: "Pengaturan", href: "/dashboard/settings", icon: Settings, roles: ["superuser"] },
   ...(LANDING_PAGE_GROUP.children ?? []),
   ...(AKADEMIK_GROUP.children ?? []),
 ];
@@ -218,17 +225,8 @@ export const getMenuItemByPath = (pathname: string): {
   menuItem: MenuItem | undefined;
   groupName: string | undefined;
 } => {
+  // Cek children dulu (lebih spesifik), baru standalone
   for (const group of MENU_GROUPS) {
-    // Standalone
-    if (group.href) {
-      if (pathname === group.href || pathname.startsWith(group.href + "/")) {
-        return {
-          menuItem: { name: group.name, title: group.title, href: group.href!, icon: group.icon, roles: group.roles },
-          groupName: group.name,
-        };
-      }
-    }
-    // Children
     if (group.children) {
       for (const item of group.children) {
         if (pathname === item.href || pathname.startsWith(item.href + "/")) {
@@ -237,6 +235,19 @@ export const getMenuItemByPath = (pathname: string): {
       }
     }
   }
+
+  // Baru cek standalone (Dashboard, Pengaturan)
+  for (const group of MENU_GROUPS) {
+    if (group.href && !group.children) {
+      if (pathname === group.href) {
+        return {
+          menuItem: { name: group.name, title: group.title, href: group.href!, icon: group.icon, roles: group.roles },
+          groupName: group.name,
+        };
+      }
+    }
+  }
+
   return { menuItem: undefined, groupName: undefined };
 };
 
