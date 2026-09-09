@@ -62,61 +62,15 @@ CREATE TABLE users (
 
 -- =========================================================
 -- DEFAULT USERS
+-- password = "password" (bcrypt hash)
 -- =========================================================
 
-INSERT INTO users (
-    id,
-    role_id,
-    username,
-    email,
-    password,
-    is_active
-) VALUES
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'superuser'),
-    'superuser',
-    'superuser@gmail.com',
-    'password',
-    TRUE
-),
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'admin'),
-    'admin',
-    'admin@gmail.com',
-    'password',
-    TRUE
-),
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'teacher'),
-    'teacher',
-    'teacher@gmail.com',
-    'password',
-    TRUE
-),
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'student'),
-    'student',
-    'student@gmail.com',
-    'password',
-    TRUE
-),
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'candidate'),
-    'candidate',
-    'candidate@gmail.com',
-    'password',
-    TRUE
-);
+INSERT INTO users (id, role_id, username, email, password, is_active) VALUES
+(UUID(), (SELECT id FROM roles WHERE name = 'superuser'), 'superuser', 'superuser@gmail.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE),
+(UUID(), (SELECT id FROM roles WHERE name = 'admin'),     'admin',     'admin@gmail.com',     '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE),
+(UUID(), (SELECT id FROM roles WHERE name = 'teacher'),   'teacher',   'teacher@gmail.com',   '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE),
+(UUID(), (SELECT id FROM roles WHERE name = 'student'),   'student',   'student@gmail.com',   '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE),
+(UUID(), (SELECT id FROM roles WHERE name = 'candidate'), 'candidate', 'candidate@gmail.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE);
 
 
 -- =========================================================
@@ -188,7 +142,6 @@ CREATE TABLE teachers (
 
 -- =========================================================
 -- 5. TABLE: school_profile
--- Profil, visi, misi, dan footer
 -- =========================================================
 
 CREATE TABLE school_profile (
@@ -240,7 +193,6 @@ CREATE TABLE hero_slides (
 
 -- =========================================================
 -- 7. TABLE: school_programs
--- Program / Jurusan
 -- =========================================================
 
 CREATE TABLE school_programs (
@@ -260,7 +212,6 @@ CREATE TABLE school_programs (
 
 -- =========================================================
 -- 8. TABLE: school_facilities
--- Fasilitas
 -- =========================================================
 
 CREATE TABLE school_facilities (
@@ -280,7 +231,6 @@ CREATE TABLE school_facilities (
 
 -- =========================================================
 -- 9. TABLE: extracurriculars
--- Ekstrakurikuler
 -- =========================================================
 
 CREATE TABLE extracurriculars (
@@ -299,7 +249,6 @@ CREATE TABLE extracurriculars (
 
 -- =========================================================
 -- 10. TABLE: school_activities
--- Kegiatan Sekolah
 -- =========================================================
 
 CREATE TABLE school_activities (
@@ -321,7 +270,6 @@ CREATE TABLE school_activities (
 
 -- =========================================================
 -- 11. TABLE: school_achievements
--- Prestasi Sekolah
 -- =========================================================
 
 CREATE TABLE school_achievements (
@@ -348,7 +296,6 @@ CREATE TABLE school_achievements (
 
 -- =========================================================
 -- 12. TABLE: articles
--- Informasi / Berita
 -- =========================================================
 
 CREATE TABLE articles (
@@ -380,10 +327,8 @@ CREATE TABLE articles (
 );
 
 
-
 -- =========================================================
 -- 13. TABLE: activity_logs
--- activity_logs
 -- =========================================================
 
 CREATE TABLE activity_logs (
@@ -407,120 +352,28 @@ CREATE TABLE activity_logs (
         ON DELETE SET NULL
 );
 
-CREATE INDEX idx_activity_logs_user_id
-    ON activity_logs(user_id);
-
-CREATE INDEX idx_activity_logs_action
-    ON activity_logs(action);
-
-CREATE INDEX idx_activity_logs_module
-    ON activity_logs(module);
-
-CREATE INDEX idx_activity_logs_created_at
-    ON activity_logs(created_at);
 
 -- =========================================================
 -- INDEX
 -- =========================================================
 
-CREATE INDEX idx_users_role_id
-ON users(role_id);
+CREATE INDEX idx_activity_logs_user_id ON activity_logs(user_id);
+CREATE INDEX idx_activity_logs_action ON activity_logs(action);
+CREATE INDEX idx_activity_logs_module ON activity_logs(module);
+CREATE INDEX idx_activity_logs_created_at ON activity_logs(created_at);
 
-CREATE INDEX idx_users_email
-ON users(email);
+CREATE INDEX idx_users_role_id ON users(role_id);
+CREATE INDEX idx_users_email ON users(email);
 
-CREATE INDEX idx_students_user_id
-ON students(user_id);
+CREATE INDEX idx_students_user_id ON students(user_id);
+CREATE INDEX idx_teachers_user_id ON teachers(user_id);
 
-CREATE INDEX idx_teachers_user_id
-ON teachers(user_id);
+CREATE INDEX idx_articles_author_id ON articles(author_id);
+CREATE INDEX idx_articles_slug ON articles(slug);
 
-CREATE INDEX idx_articles_author_id
-ON articles(author_id);
-
-CREATE INDEX idx_articles_slug
-ON articles(slug);
-
-CREATE INDEX idx_hero_slides_sort_order
-ON hero_slides(sort_order);
-
-CREATE INDEX idx_school_programs_sort_order
-ON school_programs(sort_order);
-
-CREATE INDEX idx_school_facilities_sort_order
-ON school_facilities(sort_order);
-
-CREATE INDEX idx_extracurriculars_sort_order
-ON extracurriculars(sort_order);
-
-CREATE INDEX idx_school_activities_sort_order
-ON school_activities(sort_order);
-
-CREATE INDEX idx_school_achievements_sort_order
-ON school_achievements(sort_order);
-
-CREATE INDEX idx_galleries_sort_order
-ON galleries(sort_order);
-
-CREATE INDEX idx_school_statistics_sort_order
-ON school_statistics(sort_order);
-
-
--- =========================================
--- DEFAULT USERS
--- =========================================
-
-INSERT INTO users (
-    id,
-    role_id,
-    username,
-    email,
-    password,
-    is_active
-)
-VALUES
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'superuser'),
-    'superuser',
-    'superuser@gmail.com',
-    'password',
-    TRUE
-),
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'admin'),
-    'admin',
-    'admin@gmail.com',
-    'password',
-    TRUE
-),
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'teacher'),
-    'teacher',
-    'teacher@gmail.com',
-    'password',
-    TRUE
-),
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'student'),
-    'student',
-    'student@gmail.com',
-    'password',
-    TRUE
-),
-
-(
-    UUID(),
-    (SELECT id FROM roles WHERE name = 'candidate'),
-    'candidate',
-    'candidate@gmail.com',
-    'password',
-    TRUE
-);
+CREATE INDEX idx_hero_slides_sort_order ON hero_slides(sort_order);
+CREATE INDEX idx_school_programs_sort_order ON school_programs(sort_order);
+CREATE INDEX idx_school_facilities_sort_order ON school_facilities(sort_order);
+CREATE INDEX idx_extracurriculars_sort_order ON extracurriculars(sort_order);
+CREATE INDEX idx_school_activities_sort_order ON school_activities(sort_order);
+CREATE INDEX idx_school_achievements_sort_order ON school_achievements(sort_order);
