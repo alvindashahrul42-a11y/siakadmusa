@@ -45,7 +45,7 @@ export const STANDALONE_TOP: MenuGroup = {
   title: "Dashboard",
   href: "/dashboard",
   icon: LayoutDashboard,
-  roles: ["superuser", "teacher", "student"],
+  roles: ["superuser", "admin", "teacher", "student"],
 };
 
 export const STANDALONE_BOTTOM: MenuGroup = {
@@ -61,63 +61,63 @@ export const LANDING_PAGE_GROUP: MenuGroup = {
   name: "landing-page",
   title: "Landing Page",
   icon: Globe,
-  roles: ["superuser"],
+  roles: ["superuser", "admin"],
   children: [
     {
       name: "hero-slides",
       title: "Hero Slide",
       href: "/dashboard/hero-slides",
       icon: Image,
-      roles: ["superuser"],
+      roles: ["superuser", "admin"],
     },
     {
       name: "school-profile",
       title: "Profil Sekolah",
       href: "/dashboard/school-profile",
       icon: Building,
-      roles: ["superuser"],
+      roles: ["superuser", "admin"],
     },
     {
       name: "school-facilities",
       title: "Fasilitas Sekolah",
       href: "/dashboard/school-facilities",
       icon: Building2,
-      roles: ["superuser"],
+      roles: ["superuser", "admin"],
     },
     {
       name: "school-programs",
       title: "Program Unggulan",
       href: "/dashboard/school-programs",
       icon: Layers,
-      roles: ["superuser"],
+      roles: ["superuser", "admin"],
     },
     {
       name: "extracurriculars",
       title: "Ekstrakurikuler",
       href: "/dashboard/extracurriculars",
       icon: Dumbbell,
-      roles: ["superuser"],
+      roles: ["superuser", "admin"],
     },
     {
       name: "school-activities",
       title: "Kegiatan Sekolah",
       href: "/dashboard/school-activities",
       icon: CalendarDays,
-      roles: ["superuser"],
+      roles: ["superuser", "admin"],
     },
     {
       name: "school-achievements",
       title: "Prestasi Sekolah",
       href: "/dashboard/school-achievements",
       icon: Trophy,
-      roles: ["superuser"],
+      roles: ["superuser", "admin"],
     },
     {
       name: "articles",
       title: "Artikel & Berita",
       href: "/dashboard/articles",
       icon: Newspaper,
-      roles: ["superuser"],
+      roles: ["superuser", "admin"],
     },
   ],
 };
@@ -191,7 +191,7 @@ export const MENU_GROUPS: MenuGroup[] = [
 
 // ─── Flat list (backward-compat untuk helper functions) ───────────────────────
 export const MENU_ITEMS: MenuItem[] = [
-  { name: "dashboard", title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["superuser", "teacher", "student"] },
+  { name: "dashboard", title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["superuser", "admin", "teacher", "student"] },
   { name: "settings",  title: "Pengaturan", href: "/dashboard/settings", icon: Settings, roles: ["superuser"] },
   ...(LANDING_PAGE_GROUP.children ?? []),
   ...(AKADEMIK_GROUP.children ?? []),
