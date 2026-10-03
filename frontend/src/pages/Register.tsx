@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoSmk from '../assets/logo-smk.png';
+import authService from '../services/auth.service';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Role = 'student' | 'teacher';
+type Role = 'student' | 'transfer';
 
 interface FormData {
   // step 1
@@ -12,7 +13,6 @@ interface FormData {
   // step 2
   full_name: string;
   email: string;
-  username: string;
   password: string;
   confirm_password: string;
   // step 3
@@ -36,7 +36,6 @@ const INITIAL_FORM: FormData = {
   role: '',
   full_name: '',
   email: '',
-  username: '',
   password: '',
   confirm_password: '',
   gender: '',
@@ -138,10 +137,10 @@ function Step1({
       icon: '🎓',
     },
     {
-      value: 'teacher',
-      label: 'Tenaga Pendidik',
-      desc: 'Daftar sebagai guru atau staf pengajar',
-      icon: '👩‍🏫',
+      value: 'transfer',
+      label: 'Siswa Pindahan',
+      desc: 'Pindah dari sekolah lain ke SMK Muhammadiyah Sempor',
+      icon: '🔄',
     },
   ];
 
@@ -220,15 +219,6 @@ function Step2({
           value={form.email}
           onChange={v => setForm(f => ({ ...f, email: v }))}
           placeholder="nama@example.com"
-          required
-        />
-      </div>
-      <div>
-        <Label>Username <span className="text-red-500">*</span></Label>
-        <Input
-          value={form.username}
-          onChange={v => setForm(f => ({ ...f, username: v }))}
-          placeholder="Nama pengguna unik"
           required
         />
       </div>
@@ -349,13 +339,12 @@ function Step3({
 }
 
 function Step4({ form }: { form: FormData }) {
-  const roleLabel = form.role === 'student' ? 'Siswa Baru' : 'Tenaga Pendidik';
+  const roleLabel = form.role === 'student' ? 'Siswa Baru' : form.role === 'transfer' ? 'Siswa Pindahan' : form.role;
 
   const rows: { label: string; value: string }[] = [
     { label: 'Jalur',          value: roleLabel },
     { label: 'Nama Lengkap',   value: form.full_name },
     { label: 'Email',          value: form.email },
-    { label: 'Username',       value: form.username },
     { label: 'Jenis Kelamin',  value: form.gender || '-' },
     { label: 'Tempat Lahir',   value: form.birth_place || '-' },
     { label: 'Tanggal Lahir',  value: form.birth_date || '-' },
@@ -409,7 +398,6 @@ export default function Register() {
     if (step === 2) {
       if (!form.full_name.trim()) return 'Nama lengkap wajib diisi.';
       if (!form.email.trim()) return 'Email wajib diisi.';
-      if (!form.username.trim()) return 'Username wajib diisi.';
       if (form.password.length < 8) return 'Password minimal 8 karakter.';
       if (form.password !== form.confirm_password) return 'Konfirmasi password tidak cocok.';
     }
@@ -438,11 +426,27 @@ export default function Register() {
     setError('');
 
     try {
-      // TODO: ganti dengan API call yang sesungguhnya
-      await new Promise(res => setTimeout(res, 1500));
+      // Generate username dari nama depan + 4 digit random (sama seperti backend PPDB)
+      const firstName = form.full_name.trim().split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      const generatedUsername = `${firstName}${randomSuffix}`;
+
+      await authService.register({
+        email: form.email,
+        password: form.password,
+        username: generatedUsername,
+        role: 'candidate',
+        full_name: form.full_name,
+        gender: form.gender || undefined,
+        birth_place: form.birth_place || undefined,
+        birth_date: form.birth_date || undefined,
+        phone: form.phone || undefined,
+        address: form.address || undefined,
+      });
+
       setSubmitted(true);
-    } catch {
-      setError('Pendaftaran gagal. Silakan coba lagi.');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Pendaftaran gagal. Silakan coba lagi.');
     } finally {
       setLoading(false);
     }

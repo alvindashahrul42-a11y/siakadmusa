@@ -6,7 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 const authHeader = (token: string) => ({ Authorization: `Bearer ${token}` });
 
 export const getStudents = async (
-  params?: { page?: number; limit?: number; search?: string; class_name?: string; major?: string },
+  params?: { page?: number; limit?: number; search?: string; class_id?: string; major_id?: string },
   token?: string
 ): Promise<StudentListResponse> => {
   const response = await axios.get<StudentListResponse>(`${API_BASE_URL}/students`, {
@@ -36,4 +36,11 @@ export const updateStudent = async (
 
 export const deleteStudent = async (id: string, token: string): Promise<void> => {
   await axios.delete(`${API_BASE_URL}/students/${id}`, { headers: authHeader(token) });
+};
+
+export const getStudentFullDetail = async (id: string, token: string): Promise<{ student: Student; ppdb: any }> => {
+  const response = await axios.get(`${API_BASE_URL}/students/${id}/detail`, {
+    headers: authHeader(token),
+  });
+  return response.data.data;
 };

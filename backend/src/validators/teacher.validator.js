@@ -88,12 +88,6 @@ const validateUpdateTeacher = (data) => {
     }
   }
 
-  if (data.subject !== undefined && data.subject !== null) {
-    if (typeof data.subject !== 'string' || data.subject.trim().length > 150) {
-      errors.push('Subject must not exceed 150 characters');
-    }
-  }
-
   return { isValid: errors.length === 0, errors };
 };
 

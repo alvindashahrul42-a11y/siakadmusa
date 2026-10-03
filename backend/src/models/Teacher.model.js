@@ -14,26 +14,21 @@ class TeacherModel {
       birth_date,
       phone,
       address,
-      subject
     } = teacherData;
-    
-    const [result] = await pool.execute(
+
+    await pool.execute(
       `INSERT INTO teachers (
         id, user_id, teacher_number, full_name, gender,
-        birth_place, birth_date, phone, address, subject
-      ) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        user_id, teacher_number, full_name, gender,
-        birth_place, birth_date, phone, address, subject
-      ]
+        birth_place, birth_date, phone, address
+      ) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [user_id, teacher_number, full_name, gender, birth_place, birth_date, phone, address]
     );
-    
-    // Get the created teacher ID
+
     const [rows] = await pool.execute(
       `SELECT id FROM teachers WHERE user_id = ?`,
       [user_id]
     );
-    
+
     return rows[0].id;
   }
 
@@ -45,7 +40,6 @@ class TeacherModel {
       `SELECT * FROM teachers WHERE teacher_number = ?`,
       [teacherNumber]
     );
-    
     return rows[0];
   }
 
@@ -57,7 +51,6 @@ class TeacherModel {
       `SELECT * FROM teachers WHERE user_id = ?`,
       [userId]
     );
-    
     return rows[0];
   }
 
@@ -66,7 +59,7 @@ class TeacherModel {
    */
   static async findById(id) {
     const [rows] = await pool.execute(
-      `SELECT 
+      `SELECT
         t.*,
         u.email,
         u.username,
@@ -85,22 +78,18 @@ class TeacherModel {
    * Get all teachers with pagination and optional filters
    */
   static async findAll(filters = {}, { limit = 10, offset = 0 } = {}) {
-    let where = [];
-    let params = [];
+    const where = [];
+    const params = [];
 
     if (filters.search) {
       where.push('(t.full_name LIKE ? OR t.teacher_number LIKE ?)');
       params.push(`%${filters.search}%`, `%${filters.search}%`);
     }
-    if (filters.subject) {
-      where.push('t.subject LIKE ?');
-      params.push(`%${filters.subject}%`);
-    }
 
     const whereClause = where.length ? 'WHERE ' + where.join(' AND ') : '';
 
     const [rows] = await pool.execute(
-      `SELECT 
+      `SELECT
         t.*,
         u.email,
         u.username,
@@ -121,16 +110,12 @@ class TeacherModel {
    * Count teachers with filters
    */
   static async count(filters = {}) {
-    let where = [];
-    let params = [];
+    const where = [];
+    const params = [];
 
     if (filters.search) {
       where.push('(t.full_name LIKE ? OR t.teacher_number LIKE ?)');
       params.push(`%${filters.search}%`, `%${filters.search}%`);
-    }
-    if (filters.subject) {
-      where.push('t.subject LIKE ?');
-      params.push(`%${filters.subject}%`);
     }
 
     const whereClause = where.length ? 'WHERE ' + where.join(' AND ') : '';
@@ -153,8 +138,8 @@ class TeacherModel {
     const params = [];
 
     const allowed = [
-      'teacher_number','full_name','gender','birth_place',
-      'birth_date','phone','address','subject'
+      'teacher_number', 'full_name', 'gender',
+      'birth_place', 'birth_date', 'phone', 'address',
     ];
 
     for (const key of allowed) {

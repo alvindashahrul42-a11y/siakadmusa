@@ -17,7 +17,7 @@ class TeacherController {
         email, password, username,
         teacher_number, full_name,
         gender, birth_place, birth_date,
-        phone, address, subject
+        phone, address,
       } = req.body;
 
       const validation = validateCreateTeacher(req.body);
@@ -64,12 +64,11 @@ class TeacherController {
         user_id: userId,
         teacher_number,
         full_name,
-        gender: gender || null,
+        gender:      gender      || null,
         birth_place: birth_place || null,
-        birth_date: birth_date || null,
-        phone: phone || null,
-        address: address || null,
-        subject: subject || null
+        birth_date:  birth_date  || null,
+        phone:       phone       || null,
+        address:     address     || null,
       });
 
       // Return full teacher data
@@ -89,12 +88,11 @@ class TeacherController {
    */
   static async getAll(req, res) {
     try {
-      const { search, subject } = req.query;
+      const { search } = req.query;
       const { page, limit, offset } = parsePaginationParams(req.query);
 
       const filters = {};
-      if (search)  filters.search = search;
-      if (subject) filters.subject = subject;
+      if (search) filters.search = search;
 
       const teachers = await TeacherModel.findAll(filters, { limit, offset });
       const total = await TeacherModel.count(filters);
@@ -152,7 +150,7 @@ class TeacherController {
 
       const {
         teacher_number, full_name, gender, birth_place,
-        birth_date, phone, address, subject
+        birth_date, phone, address,
       } = req.body;
 
       // Check teacher_number uniqueness if changing
@@ -165,13 +163,12 @@ class TeacherController {
 
       const updateData = {};
       if (teacher_number !== undefined) updateData.teacher_number = teacher_number;
-      if (full_name !== undefined)      updateData.full_name = full_name;
-      if (gender !== undefined)         updateData.gender = gender;
-      if (birth_place !== undefined)    updateData.birth_place = birth_place;
-      if (birth_date !== undefined)     updateData.birth_date = birth_date;
-      if (phone !== undefined)          updateData.phone = phone;
-      if (address !== undefined)        updateData.address = address;
-      if (subject !== undefined)        updateData.subject = subject;
+      if (full_name      !== undefined) updateData.full_name      = full_name;
+      if (gender         !== undefined) updateData.gender         = gender;
+      if (birth_place    !== undefined) updateData.birth_place    = birth_place;
+      if (birth_date     !== undefined) updateData.birth_date     = birth_date;
+      if (phone          !== undefined) updateData.phone          = phone;
+      if (address        !== undefined) updateData.address        = address;
 
       const updated = await TeacherModel.update(id, updateData);
 

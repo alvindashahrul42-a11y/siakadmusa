@@ -38,13 +38,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
 
   return (
     <aside
-      className={`bg-gray-900 text-white flex flex-col transition-all duration-300 ${
+      className={`bg-gray-900 text-white flex flex-col transition-all duration-300 flex-shrink-0 h-screen ${
         sidebarOpen ? 'w-64' : 'w-20'
       }`}
     >
-      {/* Logo + toggle */}
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-8">
+      {/* Logo + toggle — sticky, tidak ikut scroll */}
+      <div className="flex-shrink-0 p-4">
+        <div className="flex items-center justify-between">
           {sidebarOpen && (
             <div className="flex items-center gap-2">
               <img
@@ -66,7 +66,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
             {sidebarOpen ? '◀' : '▶'}
           </button>
         </div>
+      </div>
 
+      {/* Nav — area yang bisa di-scroll */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 pb-4">
         <nav className="space-y-1">
           {menuGroups.map((group) => {
             const GroupIcon = group.icon;

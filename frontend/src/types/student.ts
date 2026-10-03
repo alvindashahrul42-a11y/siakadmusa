@@ -8,13 +8,16 @@ export interface Student {
   birth_date: string | null;
   phone: string | null;
   address: string | null;
-  class_name: string | null;
-  major: string | null;
   enrollment_year: number | null;
   email: string;
   username: string | null;
   is_active: boolean;
   role_name: string;
+  // Joined from class_students → classes → majors (active year)
+  class_name: string | null;
+  major_code: string | null;
+  major_name: string | null;
+  academic_year_name: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -27,8 +30,6 @@ export interface StudentFormData {
   birth_date?: string;
   phone?: string;
   address?: string;
-  class_name?: string;
-  major?: string;
   enrollment_year?: number | string;
 }
 

@@ -12,7 +12,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 const authHeader = (token: string) => ({ Authorization: `Bearer ${token}` });
 
 export const getTeachers = async (
-  params?: { page?: number; limit?: number; search?: string; subject?: string },
+  params?: { page?: number; limit?: number; search?: string },
   token?: string
 ): Promise<TeacherListResponse> => {
   const response = await axios.get<TeacherListResponse>(`${API_BASE_URL}/teachers`, {

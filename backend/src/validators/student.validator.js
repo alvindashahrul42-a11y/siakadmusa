@@ -2,6 +2,15 @@
  * Validator untuk Student
  */
 
+// Normalize gender ke lowercase male/female
+function normalizeGender(val) {
+  if (!val) return null;
+  const v = val.toString().toLowerCase().trim();
+  if (['male', 'laki-laki', 'laki', 'l', 'pria'].includes(v))   return 'male';
+  if (['female', 'perempuan', 'wanita', 'p', 'w'].includes(v))  return 'female';
+  return val; // pass-through jika tidak dikenali
+}
+
 const validateUpdateStudent = (data) => {
   const errors = [];
 
@@ -21,10 +30,10 @@ const validateUpdateStudent = (data) => {
     }
   }
 
-  const validGenders = ['male', 'female', 'Male', 'Female', 'L', 'P'];
-  if (data.gender !== undefined && data.gender !== null) {
-    if (!validGenders.includes(data.gender)) {
-      errors.push('Gender must be male or female');
+  if (data.gender !== undefined && data.gender !== null && data.gender !== '') {
+    const normalized = normalizeGender(data.gender);
+    if (!['male', 'female'].includes(normalized)) {
+      errors.push('Jenis kelamin harus Laki-laki atau Perempuan');
     }
   }
 
@@ -51,4 +60,4 @@ const validateUpdateStudent = (data) => {
   return { isValid: errors.length === 0, errors };
 };
 
-module.exports = { validateUpdateStudent };
+module.exports = { validateUpdateStudent, normalizeGender };

@@ -8,7 +8,6 @@ export interface Teacher {
   birth_date: string | null;
   phone: string | null;
   address: string | null;
-  subject: string | null;
   email: string;
   username: string | null;
   is_active: boolean;
@@ -28,7 +27,6 @@ export interface TeacherCreateFormData {
   birth_date?: string;
   phone?: string;
   address?: string;
-  subject?: string;
 }
 
 export interface TeacherUpdateFormData {
@@ -39,7 +37,6 @@ export interface TeacherUpdateFormData {
   birth_date?: string;
   phone?: string;
   address?: string;
-  subject?: string;
 }
 
 export interface TeacherListResponse {

@@ -144,8 +144,6 @@ class UserModel {
           birth_date,
           phone,
           address,
-          class_name,
-          major,
           enrollment_year
          FROM students 
          WHERE user_id = ?`,
@@ -168,8 +166,7 @@ class UserModel {
           birth_place,
           birth_date,
           phone,
-          address,
-          subject
+          address
          FROM teachers 
          WHERE user_id = ?`,
         [userId]

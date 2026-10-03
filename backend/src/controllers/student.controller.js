@@ -1,7 +1,7 @@
 const StudentModel = require('../models/Student.model');
 const UserModel = require('../models/User.model');
 const { successResponse, successResponseWithPagination, errorResponse } = require('../utils/responseHelper');
-const { validateUpdateStudent } = require('../validators/student.validator');
+const { validateUpdateStudent, normalizeGender } = require('../validators/student.validator');
 const { parsePaginationParams } = require('../utils/paginationHelper');
 
 class StudentController {
@@ -12,13 +12,13 @@ class StudentController {
    */
   static async getAll(req, res) {
     try {
-      const { search, class_name, major } = req.query;
+      const { search, class_id, major_id } = req.query;
       const { page, limit, offset } = parsePaginationParams(req.query);
 
       const filters = {};
-      if (search)     filters.search = search;
-      if (class_name) filters.class_name = class_name;
-      if (major)      filters.major = major;
+      if (search)   filters.search = search;
+      if (class_id) filters.class_id = class_id;
+      if (major_id) filters.major_id = major_id;
 
       const students = await StudentModel.findAll(filters, { limit, offset });
       const total = await StudentModel.count(filters);
@@ -76,7 +76,7 @@ class StudentController {
 
       const {
         student_number, full_name, gender, birth_place,
-        birth_date, phone, address, class_name, major, enrollment_year
+        birth_date, phone, address, enrollment_year
       } = req.body;
 
       // Check student_number uniqueness if changing
@@ -88,15 +88,13 @@ class StudentController {
       }
 
       const updateData = {};
-      if (student_number !== undefined) updateData.student_number = student_number;
-      if (full_name !== undefined)      updateData.full_name = full_name;
-      if (gender !== undefined)         updateData.gender = gender;
-      if (birth_place !== undefined)    updateData.birth_place = birth_place;
-      if (birth_date !== undefined)     updateData.birth_date = birth_date;
-      if (phone !== undefined)          updateData.phone = phone;
-      if (address !== undefined)        updateData.address = address;
-      if (class_name !== undefined)     updateData.class_name = class_name;
-      if (major !== undefined)          updateData.major = major;
+      if (student_number !== undefined)  updateData.student_number  = student_number;
+      if (full_name !== undefined)       updateData.full_name       = full_name;
+      if (gender !== undefined)          updateData.gender          = gender ? normalizeGender(gender) : null;
+      if (birth_place !== undefined)     updateData.birth_place     = birth_place;
+      if (birth_date !== undefined)      updateData.birth_date      = birth_date;
+      if (phone !== undefined)           updateData.phone           = phone;
+      if (address !== undefined)         updateData.address         = address;
       if (enrollment_year !== undefined) updateData.enrollment_year = enrollment_year;
 
       const updated = await StudentModel.update(id, updateData);
@@ -109,10 +107,30 @@ class StudentController {
   }
 
   /**
-   * Delete student
-   * DELETE /api/students/:id
-   * @access Private (Admin/Superuser)
+   * Get student full detail (termasuk data PPDB)
+   * GET /api/students/:id/detail
+   * @access Private (Superuser/Teacher)
    */
+  static async getFullDetail(req, res) {
+    try {
+      const { id } = req.params;
+      const student = await StudentModel.findById(id);
+      if (!student) return errorResponse(res, 404, 'Student not found');
+
+      // Ambil data PPDB jika ada
+      const PpdbModel = require('../models/Ppdb.model');
+      const ppdb = await PpdbModel.findByUserId(student.user_id);
+      let ppdbDetail = null;
+      if (ppdb) {
+        ppdbDetail = await PpdbModel.findFullDetail(ppdb.id);
+      }
+
+      return successResponse(res, 200, 'Student detail retrieved', { student, ppdb: ppdbDetail });
+    } catch (error) {
+      console.error('Get student full detail error:', error);
+      return errorResponse(res, 500, 'Failed to retrieve student detail', error.message);
+    }
+  }
   static async delete(req, res) {
     try {
       const { id } = req.params;

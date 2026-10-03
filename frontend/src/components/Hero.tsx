@@ -116,7 +116,7 @@ export default function Hero() {
                 backgroundImage: `url(${
                   slide.image.startsWith('http') 
                     ? slide.image 
-                    : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${slide.image}`
+                    : `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000'}${slide.image}`
                 })` 
               }}
             >

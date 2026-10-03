@@ -2,19 +2,26 @@ import { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Search, ChevronLeft, ChevronRight, X, UserCircle } from 'lucide-react';
 import { getTeachers, createTeacher, updateTeacher, deleteTeacher } from '../services/teacher.service';
 import type { Teacher, TeacherCreateFormData, TeacherUpdateFormData } from '../types/teacher';
+import { useAuth } from '../contexts/AuthContext';
 
 const token = () => localStorage.getItem('token') ?? '';
 
-const GENDERS = ['', 'male', 'female'];
+const GENDERS: { value: string; label: string }[] = [
+  { value: '',       label: '— Pilih —' },
+  { value: 'male',   label: 'Laki-laki' },
+  { value: 'female', label: 'Perempuan' },
+];
 
 const EMPTY_CREATE: TeacherCreateFormData = {
   email: '', password: '', username: '',
   teacher_number: '', full_name: '',
   gender: '', birth_place: '', birth_date: '',
-  phone: '', address: '', subject: '',
+  phone: '', address: '',
 };
 
 export default function Teachers() {
+  const { user } = useAuth();
+  const isSuperuser = user?.role === 'superuser';
   const [teachers, setTeachers]   = useState<Teacher[]>([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState<string | null>(null);
@@ -72,15 +79,23 @@ export default function Teachers() {
 
   const openEditModal = (t: Teacher) => {
     setEditingItem(t);
+
+    const normalizeGender = (val: string | null | undefined): string => {
+      if (!val) return '';
+      const v = val.toLowerCase().trim();
+      if (['male', 'laki-laki', 'laki', 'l', 'pria'].includes(v))  return 'male';
+      if (['female', 'perempuan', 'wanita', 'p', 'w'].includes(v)) return 'female';
+      return v;
+    };
+
     setEditForm({
       teacher_number: t.teacher_number,
       full_name:      t.full_name,
-      gender:         t.gender ?? '',
+      gender:         normalizeGender(t.gender),
       birth_place:    t.birth_place ?? '',
       birth_date:     t.birth_date ? t.birth_date.substring(0, 10) : '',
       phone:          t.phone ?? '',
       address:        t.address ?? '',
-      subject:        t.subject ?? '',
     });
     setFormErrors([]);
     setShowModal(true);
@@ -111,7 +126,6 @@ export default function Teachers() {
         if (!payload.birth_date)  delete payload.birth_date;
         if (!payload.phone)       delete payload.phone;
         if (!payload.address)     delete payload.address;
-        if (!payload.subject)     delete payload.subject;
         await updateTeacher(editingItem.id, payload, token());
       } else {
         const payload: TeacherCreateFormData = { ...createForm };
@@ -121,7 +135,6 @@ export default function Teachers() {
         if (!payload.birth_date)  delete payload.birth_date;
         if (!payload.phone)       delete payload.phone;
         if (!payload.address)     delete payload.address;
-        if (!payload.subject)     delete payload.subject;
         await createTeacher(payload, token());
       }
       closeModal();
@@ -177,11 +190,13 @@ export default function Teachers() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-500">Total: <span className="font-semibold text-gray-800">{total}</span> guru</span>
-          <button onClick={openCreateModal}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg font-semibold text-sm">
-            <Plus className="w-4 h-4" />
-            Tambah Guru
-          </button>
+          {isSuperuser && (
+            <button onClick={openCreateModal}
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg font-semibold text-sm">
+              <Plus className="w-4 h-4" />
+              Tambah Guru
+            </button>
+          )}
         </div>
       </div>
 
@@ -202,17 +217,18 @@ export default function Teachers() {
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">#</th>
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">NIP</th>
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Nama Lengkap</th>
-                  <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Mata Pelajaran</th>
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Email</th>
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">No. Telepon</th>
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Status</th>
-                  <th className="text-center px-5 py-3.5 font-semibold text-gray-600">Aksi</th>
+                  {isSuperuser && (
+                    <th className="text-center px-5 py-3.5 font-semibold text-gray-600">Aksi</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {teachers.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="text-center py-16 text-gray-400">
+                    <td colSpan={isSuperuser ? 7 : 6} className="text-center py-16 text-gray-400">
                       <UserCircle className="w-12 h-12 mx-auto mb-3 opacity-30" />
                       <p>Tidak ada guru ditemukan</p>
                     </td>
@@ -222,7 +238,6 @@ export default function Teachers() {
                     <td className="px-5 py-4 text-gray-400">{(page - 1) * LIMIT + i + 1}</td>
                     <td className="px-5 py-4 font-mono text-gray-700">{t.teacher_number}</td>
                     <td className="px-5 py-4 font-medium text-gray-800">{t.full_name}</td>
-                    <td className="px-5 py-4 text-gray-600">{t.subject ?? '—'}</td>
                     <td className="px-5 py-4 text-gray-600">{t.email}</td>
                     <td className="px-5 py-4 text-gray-600">{t.phone ?? '—'}</td>
                     <td className="px-5 py-4">
@@ -230,18 +245,20 @@ export default function Teachers() {
                         {t.is_active ? 'Aktif' : 'Nonaktif'}
                       </span>
                     </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => openEditModal(t)} title="Edit"
-                          className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => openDeleteModal(t)} title="Hapus"
-                          className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 border border-red-200 transition-colors">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
+                    {isSuperuser && (
+                      <td className="px-5 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <button onClick={() => openEditModal(t)} title="Edit"
+                            className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => openDeleteModal(t)} title="Hapus"
+                            className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 border border-red-200 transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -385,15 +402,6 @@ export default function Teachers() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Mata Pelajaran</label>
-                  <input
-                    name="subject"
-                    value={editingItem ? (editForm.subject ?? '') : (createForm.subject ?? '')}
-                    onChange={editingItem ? handleEditInput : handleCreateInput}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
-                <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Jenis Kelamin</label>
                   <select
                     name="gender"
@@ -401,7 +409,7 @@ export default function Teachers() {
                     onChange={editingItem ? handleEditInput : handleCreateInput}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                   >
-                    {GENDERS.map(g => <option key={g} value={g}>{g || '— Pilih —'}</option>)}
+                    {GENDERS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
                   </select>
                 </div>
                 <div>

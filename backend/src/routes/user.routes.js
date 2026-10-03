@@ -8,32 +8,32 @@ router.use(authenticate);
 
 /**
  * @route   GET /api/users
- * @access  Private (Superuser/Teacher)
+ * @access  Private (Superuser)
  */
-router.get('/', authorize('superuser', 'teacher'), UserController.getAll);
+router.get('/', authorize('superuser'), UserController.getAll);
 
 /**
  * @route   GET /api/users/:id
- * @access  Private (Superuser/Teacher)
+ * @access  Private (Superuser)
  */
-router.get('/:id', authorize('superuser', 'teacher'), UserController.getById);
+router.get('/:id', authorize('superuser'), UserController.getById);
 
 /**
  * @route   PUT /api/users/:id
- * @access  Private (Superuser/Teacher)
+ * @access  Private (Superuser)
  */
-router.put('/:id', authorize('superuser', 'teacher'), UserController.update);
+router.put('/:id', authorize('superuser'), UserController.update);
 
 /**
  * @route   PATCH /api/users/:id/toggle-active
- * @access  Private (Superuser/Teacher)
+ * @access  Private (Superuser)
  */
-router.patch('/:id/toggle-active', authorize('superuser', 'teacher'), UserController.toggleActive);
+router.patch('/:id/toggle-active', authorize('superuser'), UserController.toggleActive);
 
 /**
  * @route   DELETE /api/users/:id
- * @access  Private (Superuser/Teacher)
+ * @access  Private (Superuser)
  */
-router.delete('/:id', authorize('superuser', 'teacher'), UserController.delete);
+router.delete('/:id', authorize('superuser'), UserController.delete);
 
 module.exports = router;

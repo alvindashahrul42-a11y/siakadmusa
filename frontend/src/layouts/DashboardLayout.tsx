@@ -43,14 +43,14 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="h-screen bg-gray-100 flex overflow-hidden">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Navbar */}
-        <header className="bg-white shadow-md">
+        <header className="bg-white shadow-md flex-shrink-0">
           <div className="px-6 py-4 flex justify-between items-center">
             <div>
               <h2 className="text-2xl font-bold text-gray-800">{pageTitle}</h2>
@@ -95,7 +95,7 @@ export default function DashboardLayout() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-y-auto scrollbar-hide">
           <Outlet />
         </main>
       </div>

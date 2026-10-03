@@ -19,6 +19,13 @@ router.get('/', authorize('superuser', 'teacher'), StudentController.getAll);
 router.get('/:id', authorize('superuser', 'teacher'), StudentController.getById);
 
 /**
+ * @route   GET /api/students/:id/detail
+ * @desc    Detail lengkap siswa termasuk data PPDB
+ * @access  Private (Superuser/Teacher)
+ */
+router.get('/:id/detail', authorize('superuser', 'teacher'), StudentController.getFullDetail);
+
+/**
  * @route   PUT /api/students/:id
  * @access  Private (Superuser/Teacher)
  */

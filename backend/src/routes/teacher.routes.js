@@ -8,9 +8,9 @@ router.use(authenticate);
 
 /**
  * @route   POST /api/teachers
- * @access  Private (Superuser/Teacher)
+ * @access  Private (Superuser only)
  */
-router.post('/', authorize('superuser', 'teacher'), TeacherController.create);
+router.post('/', authorize('superuser'), TeacherController.create);
 
 /**
  * @route   GET /api/teachers
@@ -26,9 +26,9 @@ router.get('/:id', authorize('superuser', 'teacher'), TeacherController.getById)
 
 /**
  * @route   PUT /api/teachers/:id
- * @access  Private (Superuser/Teacher)
+ * @access  Private (Superuser only)
  */
-router.put('/:id', authorize('superuser', 'teacher'), TeacherController.update);
+router.put('/:id', authorize('superuser'), TeacherController.update);
 
 /**
  * @route   DELETE /api/teachers/:id

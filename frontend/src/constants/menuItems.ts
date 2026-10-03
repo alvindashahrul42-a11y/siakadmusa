@@ -17,6 +17,11 @@ import {
   Layers,
   Globe,
   School,
+  ClipboardCheck,
+  ShieldCheck,
+  FlaskConical,
+  CalendarRange,
+  BookOpenCheck,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -122,6 +127,23 @@ export const LANDING_PAGE_GROUP: MenuGroup = {
   ],
 };
 
+// ─── Group: Kandidat ──────────────────────────────────────────────────────────
+export const KANDIDAT_GROUP: MenuGroup = {
+  name: "kandidat",
+  title: "Pendaftaran Saya",
+  icon: ClipboardCheck,
+  roles: ["candidate"],
+  children: [
+    {
+      name: "ppdb-form",
+      title: "Lengkapi Data Pendaftaran",
+      href: "/dashboard/ppdb-form",
+      icon: ClipboardList,
+      roles: ["candidate"],
+    },
+  ],
+};
+
 // ─── Group: Akademik ───────────────────────────────────────────────────────────
 export const AKADEMIK_GROUP: MenuGroup = {
   name: "akademik",
@@ -134,7 +156,7 @@ export const AKADEMIK_GROUP: MenuGroup = {
       title: "Data Pengguna",
       href: "/dashboard/users",
       icon: UserCircle,
-      roles: ["superuser", "teacher"],
+      roles: ["superuser"],
     },
     {
       name: "students",
@@ -151,6 +173,34 @@ export const AKADEMIK_GROUP: MenuGroup = {
       roles: ["superuser", "teacher"],
     },
     {
+      name: "ppdb",
+      title: "Data Kandidat",
+      href: "/dashboard/ppdb",
+      icon: ClipboardCheck,
+      roles: ["superuser", "teacher"],
+    },
+    {
+      name: "academic-years",
+      title: "Tahun Ajaran",
+      href: "/dashboard/academic-years",
+      icon: CalendarDays,
+      roles: ["superuser"],
+    },
+    {
+      name: "majors",
+      title: "Jurusan",
+      href: "/dashboard/majors",
+      icon: BookOpen,
+      roles: ["superuser"],
+    },
+    {
+      name: "classes",
+      title: "Data Kelas",
+      href: "/dashboard/classes",
+      icon: School,
+      roles: ["superuser", "teacher"],
+    },
+    {
       name: "subjects",
       title: "Mata Pelajaran",
       href: "/dashboard/subjects",
@@ -160,16 +210,51 @@ export const AKADEMIK_GROUP: MenuGroup = {
     {
       name: "schedule",
       title: "Jadwal",
-      href: "/dashboard/schedule",
+      href: "/dashboard/schedules",
       icon: Calendar,
       roles: ["superuser", "teacher", "student"],
     },
     {
       name: "grades",
       title: "Nilai",
-      href: "/dashboard/grades",
+      href: "/dashboard/grades-overview",
       icon: ClipboardList,
       roles: ["superuser", "teacher", "student"],
+    },
+    {
+      name: "attendance",
+      title: "Absensi",
+      href: "/dashboard/attendance-overview",
+      icon: ClipboardCheck,
+      roles: ["superuser", "teacher", "student"],
+    },
+    {
+      name: "exam-types",
+      title: "Jenis Ujian",
+      href: "/dashboard/exam-types",
+      icon: FlaskConical,
+      roles: ["superuser"],
+    },
+    {
+      name: "exams",
+      title: "Ujian",
+      href: "/dashboard/exams",
+      icon: CalendarRange,
+      roles: ["superuser", "teacher", "student"],
+    },
+    {
+      name: "question-sets",
+      title: "Paket Soal",
+      href: "/dashboard/question-sets",
+      icon: BookOpenCheck,
+      roles: ["superuser", "teacher"],
+    },
+    {
+      name: "my-exams",
+      title: "Ujian Saya",
+      href: "/dashboard/my-exams",
+      icon: CalendarRange,
+      roles: ["student"],
     },
     {
       name: "reports",
@@ -178,12 +263,20 @@ export const AKADEMIK_GROUP: MenuGroup = {
       icon: FileText,
       roles: ["superuser", "teacher"],
     },
+    {
+      name: "activity-logs",
+      title: "Activity Logs",
+      href: "/dashboard/activity-logs",
+      icon: ShieldCheck,
+      roles: ["superuser"],
+    },
   ],
 };
 
 // ─── All groups (urutan render) ────────────────────────────────────────────────
 export const MENU_GROUPS: MenuGroup[] = [
   STANDALONE_TOP,
+  KANDIDAT_GROUP,
   LANDING_PAGE_GROUP,
   AKADEMIK_GROUP,
   STANDALONE_BOTTOM,

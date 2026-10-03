@@ -4,6 +4,7 @@ const path = require('path');
 require('dotenv').config();
 
 const pool = require('./config/database');
+const activityLogMiddleware = require('./middleware/activityLog.middleware');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -40,6 +41,9 @@ app.get('/', (req, res) => {
   });
 });
 
+// Activity log middleware — must be AFTER express.json() so req.body is parsed
+app.use(activityLogMiddleware);
+
 // API Routes
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/hero-slides', require('./routes/heroSlide.routes'));
@@ -52,7 +56,25 @@ app.use('/api/articles', require('./routes/article.routes'));
 app.use('/api/school-programs', require('./routes/schoolProgram.routes'));
 app.use('/api/users', require('./routes/user.routes'));
 app.use('/api/students', require('./routes/student.routes'));
+app.use('/api/ppdb', require('./routes/ppdb.routes'));
 app.use('/api/teachers', require('./routes/teacher.routes'));
+app.use('/api/academic-years', require('./routes/academicYear.routes'));
+app.use('/api/majors', require('./routes/major.routes'));
+app.use('/api/classes',     require('./routes/class.routes'));
+app.use('/api/subjects',    require('./routes/subject.routes'));
+app.use('/api/schedules',   require('./routes/schedule.routes'));
+app.use('/api/attendance',  require('./routes/attendance.routes'));
+app.use('/api/grades',      require('./routes/grade.routes'));
+app.use('/api/assignments',        require('./routes/assignment.routes'));
+app.use('/api/exam-types',         require('./routes/examType.routes'));
+app.use('/api/exams',              require('./routes/exam.routes'));
+app.use('/api/exam-schedules',     require('./routes/examSchedule.routes'));
+app.use('/api/exam-supervisors',   require('./routes/examSupervisor.routes'));
+app.use('/api/question-sets',      require('./routes/questionSet.routes'));
+app.use('/api/questions',          require('./routes/question.routes'));
+app.use('/api/exam-attempts',      require('./routes/examAttempt.routes'));
+app.use('/api/exam-answers',       require('./routes/examAnswer.routes'));
+app.use('/api/activity-logs',      require('./routes/activityLog.routes'));
 
 // 404 handler
 app.use((req, res) => {
