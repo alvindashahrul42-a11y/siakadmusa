@@ -89,3 +89,51 @@ export const importGrades = async (
   );
   return res.data.data;
 };
+
+// ── My Grades (student) ───────────────────────────────────────────────────────
+
+export interface MyGradeItem {
+  id: string;
+  class_subject_id: string;
+  assignment_score: number | null;
+  midterm_score: number | null;
+  final_exam_score: number | null;
+  final_score: number | null;
+  notes: string | null;
+  subject_name: string;
+  subject_code: string;
+  teacher_name: string | null;
+  class_name: string;
+  grade_level: number;
+  academic_year_name: string;
+  year_is_active: boolean;
+}
+
+export interface MyExamScoreItem {
+  subject_id: string;
+  subject_name: string;
+  subject_code: string;
+  class_name: string;
+  exam_name: string;
+  exam_type_code: string;
+  total_score: number | null;
+  attempt_status: string;
+  exam_date: string;
+  academic_year_name: string;
+}
+
+export interface MyGradesResponse {
+  success: boolean;
+  data: {
+    student: { id: string; full_name: string; student_number: string };
+    grades: MyGradeItem[];
+    exam_scores: MyExamScoreItem[];
+  };
+}
+
+export const getMyGrades = async (token: string): Promise<MyGradesResponse['data']> => {
+  const res = await axios.get<MyGradesResponse>(`${API_BASE_URL}/grades/my`, {
+    headers: authHeader(token),
+  });
+  return res.data.data;
+};

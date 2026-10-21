@@ -22,6 +22,9 @@ router.post('/import',
 );
 
 // ── CRUD Nilai ───────────────────────────────────────────────────────────────
+// Nilai siswa yang login (harus sebelum /:id)
+router.get('/my',       authorize('student'),                         GradeController.getMy);
+
 // Student's grades across a class
 router.get('/student',  authorize('superuser', 'teacher', 'student'), GradeController.getByStudent);
 

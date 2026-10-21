@@ -391,24 +391,25 @@ export default function ExamTaking() {
   return (
     <div className="max-w-4xl mx-auto space-y-4">
       {/* Top bar */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-3 flex items-center justify-between">
-        <div>
-          <p className="font-semibold text-gray-800 text-sm">{user?.profile?.full_name ?? user?.username}</p>
-          <p className="text-xs text-gray-400">{answeredCount}/{questions.length} soal dijawab</p>
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-3 flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <p className="font-semibold text-gray-800 text-sm truncate">{user?.profile?.full_name ?? user?.username}</p>
+          <p className="text-xs text-gray-400">{answeredCount}/{questions.length} dijawab</p>
         </div>
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold text-lg ${timeLeft < 300 ? 'bg-red-100 text-red-600' : 'bg-blue-50 text-blue-700'}`}>
-          <Clock className="w-5 h-5" />
+        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono font-bold text-base flex-shrink-0 ${timeLeft < 300 ? 'bg-red-100 text-red-600' : 'bg-blue-50 text-blue-700'}`}>
+          <Clock className="w-4 h-4" />
           {formatTime(timeLeft)}
         </div>
         <button onClick={() => setShowConfirm(true)} disabled={submitting}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 disabled:opacity-60">
-          <Send className="w-4 h-4" /> Kumpulkan
+          className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 disabled:opacity-60 flex-shrink-0">
+          <Send className="w-4 h-4" />
+          <span className="hidden sm:inline">Kumpulkan</span>
         </button>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex flex-col lg:flex-row gap-4">
         {/* Question area */}
-        <div className="flex-1 bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
+        <div className="flex-1 bg-white rounded-xl border border-gray-100 shadow-sm p-4 md:p-6 space-y-5">
           {/* Question meta */}
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
@@ -527,9 +528,9 @@ export default function ExamTaking() {
         </div>
 
         {/* Question navigator */}
-        <div className="w-48 bg-white rounded-xl border border-gray-100 shadow-sm p-4 self-start">
+        <div className="lg:w-48 bg-white rounded-xl border border-gray-100 shadow-sm p-4 lg:self-start">
           <p className="text-xs font-semibold text-gray-500 mb-3">Navigasi Soal</p>
-          <div className="grid grid-cols-5 gap-1.5">
+          <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-5 gap-1.5">
             {questions.map((q, i) => {
               const ans = answers[q.id];
               const isAnswered = (() => {

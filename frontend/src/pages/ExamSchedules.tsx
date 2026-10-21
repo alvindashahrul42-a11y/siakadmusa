@@ -33,6 +33,7 @@ export default function ExamSchedules() {
   const navigate   = useNavigate();
   const { user }   = useAuth();
   const canEdit    = user?.role === 'superuser' || user?.role === 'teacher';
+  const isStudent  = user?.role === 'student';
 
   const [exam, setExam]               = useState<Exam | null>(null);
   const [items, setItems]             = useState<ExamSchedule[]>([]);
@@ -311,15 +312,15 @@ export default function ExamSchedules() {
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Tanggal</th>
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Waktu</th>
                   <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Ruangan</th>
-                  <th className="text-center px-5 py-3.5 font-semibold text-gray-600">Pengawas</th>
-                  <th className="text-center px-5 py-3.5 font-semibold text-gray-600">Hasil</th>
+                  {!isStudent && <th className="text-center px-5 py-3.5 font-semibold text-gray-600">Pengawas</th>}
+                  {!isStudent && <th className="text-center px-5 py-3.5 font-semibold text-gray-600">Hasil</th>}
                   {canEdit && <th className="text-center px-5 py-3.5 font-semibold text-gray-600">Aksi</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {items.length === 0 ? (
                   <tr>
-                    <td colSpan={canEdit ? 9 : 8} className="text-center py-16 text-gray-400">
+                    <td colSpan={canEdit ? 7 : isStudent ? 6 : 8} className="text-center py-16 text-gray-400">
                       <CalendarDays className="w-12 h-12 mx-auto mb-3 opacity-30" />
                       <p>Belum ada jadwal ujian</p>
                     </td>
@@ -347,24 +348,28 @@ export default function ExamSchedules() {
                         {item.room ?? <span className="italic text-gray-300">—</span>}
                       </td>
                       <td className="px-5 py-4 text-center">
-                        <button
-                          onClick={() => openSvPanel(item.id)}
-                          className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg border transition-colors
-                            ${svPanel === item.id
-                              ? 'bg-blue-600 text-white border-blue-600'
-                              : 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100'}`}>
-                          <Users className="w-3.5 h-3.5" />
-                          {item.supervisor_count}
-                        </button>
+                        {!isStudent && (
+                          <button
+                            onClick={() => openSvPanel(item.id)}
+                            className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg border transition-colors
+                              ${svPanel === item.id
+                                ? 'bg-blue-600 text-white border-blue-600'
+                                : 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100'}`}>
+                            <Users className="w-3.5 h-3.5" />
+                            {item.supervisor_count}
+                          </button>
+                        )}
                       </td>
                       {/* Hasil ujian */}
                       <td className="px-5 py-4 text-center">
-                        <button
-                          onClick={() => navigate(`/dashboard/exams/${item.id}/results`)}
-                          className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg border bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100 transition-colors">
-                          <BarChart2 className="w-3.5 h-3.5" />
-                          {item.attempt_count ?? 0}
-                        </button>
+                        {!isStudent && (
+                          <button
+                            onClick={() => navigate(`/dashboard/exams/${item.id}/results`)}
+                            className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg border bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100 transition-colors">
+                            <BarChart2 className="w-3.5 h-3.5" />
+                            {item.attempt_count ?? 0}
+                          </button>
+                        )}
                       </td>
                       {canEdit && (
                         <td className="px-5 py-4">

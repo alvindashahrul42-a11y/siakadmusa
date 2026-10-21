@@ -1,13 +1,36 @@
 const GradeModel        = require('../models/Grade.model');
 const ClassSubjectModel = require('../models/ClassSubject.model');
+const StudentModel      = require('../models/Student.model');
 const { successResponse, successResponseWithPagination, errorResponse } = require('../utils/responseHelper');
 const { validateGrade, validateUpdateGrade } = require('../validators/grade.validator');
 const { parsePaginationParams } = require('../utils/paginationHelper');
 
 class GradeController {
   /**
-   * POST /api/grades — upsert grade for one student
+   * GET /api/grades/my — nilai siswa yang sedang login
    */
+  static async getMy(req, res) {
+    try {
+      const student = await StudentModel.findByUserId(req.user.id);
+      if (!student) return errorResponse(res, 403, 'Akun ini tidak terhubung ke data siswa');
+
+      const { grades, examScores } = await GradeModel.findMyGrades(student.id);
+      return successResponse(res, 200, 'Data nilai berhasil dimuat', {
+        student: {
+          id: student.id,
+          full_name: student.full_name,
+          student_number: student.student_number,
+        },
+        grades,
+        exam_scores: examScores,
+      });
+    } catch (error) {
+      console.error('Get my grades error:', error);
+      return errorResponse(res, 500, 'Gagal memuat nilai', error.message);
+    }
+  }
+
+
   static async upsert(req, res) {
     try {
       const validation = validateGrade(req.body);

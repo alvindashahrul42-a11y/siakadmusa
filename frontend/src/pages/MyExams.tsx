@@ -55,25 +55,23 @@ export default function MyExams() {
             const isToday = s.exam_date === today;
             return (
               <div key={s.id} className={`bg-white rounded-xl border shadow-sm overflow-hidden ${highlight ? 'border-blue-200' : 'border-gray-100'}`}>
-                <div className="flex items-center gap-4 px-5 py-4">
-                  <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isToday ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
-                    <span className="text-lg font-bold leading-none">{new Date(s.exam_date).getDate()}</span>
+                <div className="flex items-start sm:items-center gap-3 px-4 py-4">
+                  <div className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isToday ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                    <span className="text-base font-bold leading-none">{new Date(s.exam_date).getDate()}</span>
                     <span className="text-xs">{new Date(s.exam_date).toLocaleString('id-ID', { month: 'short' })}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-800">{s.exam_name}</p>
-                    <p className="text-sm text-gray-600">{s.subject_name} · {s.class_name}</p>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
+                    <p className="font-semibold text-gray-800 text-sm leading-snug">{s.exam_name}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{s.subject_name} · {s.class_name}</p>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-xs text-gray-400">
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
+                        <Clock className="w-3 h-3" />
                         {s.start_time?.slice(0, 5)} – {s.end_time?.slice(0, 5)}
                       </span>
-                      {s.duration_minutes && (
-                        <span>{s.duration_minutes} menit</span>
-                      )}
+                      {s.duration_minutes && <span>{s.duration_minutes} menit</span>}
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${info.color}`}>
                       {info.label}
                     </span>
@@ -85,9 +83,8 @@ export default function MyExams() {
                     {info.canStart && isToday && (
                       <button onClick={() => navigate(`/dashboard/exam-taking/${s.id}`)}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700">
-                        {s.attempt_status === 'in_progress'
-                          ? <><PlayCircle className="w-3.5 h-3.5" /> Lanjutkan</>
-                          : <><PlayCircle className="w-3.5 h-3.5" /> Mulai Ujian</>}
+                        <PlayCircle className="w-3.5 h-3.5" />
+                        {s.attempt_status === 'in_progress' ? 'Lanjutkan' : 'Mulai'}
                       </button>
                     )}
                     {s.attempt_status === 'graded' && (

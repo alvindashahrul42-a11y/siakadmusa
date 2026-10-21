@@ -121,6 +121,69 @@ class GradeModel {
     return rows;
   }
 
+  /**
+   * Get grades for a student across all subjects — semua kelas yang pernah diikuti
+   * Sekaligus sertakan nilai ujian online dari exam_attempts
+   */
+  static async findMyGrades(student_id) {
+    // Nilai akademik dari tabel grades
+    const [grades] = await pool.execute(
+      `SELECT
+         g.id,
+         g.class_subject_id,
+         g.assignment_score,
+         g.midterm_score,
+         g.final_exam_score,
+         g.final_score,
+         g.notes,
+         s.name        AS subject_name,
+         s.code        AS subject_code,
+         t.full_name   AS teacher_name,
+         c.name        AS class_name,
+         c.grade_level,
+         ay.name       AS academic_year_name,
+         ay.is_active  AS year_is_active
+       FROM grades g
+       JOIN class_subjects  cs  ON g.class_subject_id = cs.id
+       JOIN subjects        s   ON cs.subject_id       = s.id
+       JOIN classes         c   ON cs.class_id         = c.id
+       JOIN academic_years  ay  ON c.academic_year_id  = ay.id
+       LEFT JOIN teachers   t   ON cs.teacher_id       = t.id
+       WHERE g.student_id = ?
+       ORDER BY ay.start_date DESC, s.name ASC`,
+      [student_id]
+    );
+
+    // Nilai ujian online dari exam_attempts (per mapel per kelas)
+    const [examScores] = await pool.execute(
+      `SELECT
+         s.id          AS subject_id,
+         s.name        AS subject_name,
+         s.code        AS subject_code,
+         c.name        AS class_name,
+         e.name        AS exam_name,
+         et.code       AS exam_type_code,
+         at.total_score,
+         at.status     AS attempt_status,
+         DATE_FORMAT(es_sch.exam_date, '%Y-%m-%d') AS exam_date,
+         ay.name       AS academic_year_name
+       FROM exam_attempts at
+       JOIN exam_schedules  es_sch ON at.exam_schedule_id = es_sch.id
+       JOIN exams           e      ON es_sch.exam_id       = e.id
+       JOIN exam_types      et     ON e.exam_type_id       = et.id
+       JOIN class_subjects  cs     ON es_sch.class_subject_id = cs.id
+       JOIN subjects        s      ON cs.subject_id            = s.id
+       JOIN classes         c      ON cs.class_id              = c.id
+       JOIN academic_years  ay     ON c.academic_year_id       = ay.id
+       WHERE at.student_id = ?
+         AND at.status IN ('submitted', 'graded', 'timed_out')
+       ORDER BY es_sch.exam_date DESC`,
+      [student_id]
+    );
+
+    return { grades, examScores };
+  }
+
   static async update(id, data) {
     const fields = [];
     const params = [];
